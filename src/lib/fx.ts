@@ -993,10 +993,15 @@ function setupRip(S: S) {
     cta = q("[data-rip-cta]", sec),
     flash = q("[data-rip-flash]", sec),
     hint = q("[data-rip-hint]", sec);
-  cards.forEach((c) => {
-    const f = q<HTMLElement>("[data-fan-face]", c),
-      u = faceOf(c.dataset.id!);
-    if (f && u) f.style.backgroundImage = `url(${u})`;
+  // setupRip roda antes das cartas (TCGdex) estarem prontas — faceOf() só
+  // tem o que precisa depois que S.o.cardsReady resolve, então a imagem é
+  // aplicada ali, não na hora (senão fica sempre em branco).
+  S.o.cardsReady.then(() => {
+    cards.forEach((c) => {
+      const f = q<HTMLElement>("[data-fan-face]", c),
+        u = faceOf(c.dataset.id!);
+      if (f && u) f.style.backgroundImage = `url(${u})`;
+    });
   });
   qa<HTMLElement>("[data-fan-holo]", sec).forEach((h) => !RM() && gsap.fromTo(h, { backgroundPosition: "0% 50%" }, { backgroundPosition: "100% 50%", duration: 2.4, repeat: -1, yoyo: true, ease: "sine.inOut" }));
   setupCardZoom(S, cards, q<HTMLElement>("[data-card-zoom-backdrop]", sec));
@@ -1028,8 +1033,10 @@ function setupRip(S: S) {
 /* ---------------------------------- CONDIÇÃO / PASSOS ---------------------------------- */
 function setupCondition(S: S) {
   const f = q<HTMLElement>("[data-cond-face]", S.root);
-  const fu = f && f.dataset.id && faceOf(f.dataset.id);
-  if (fu) f!.style.backgroundImage = `url(${fu})`;
+  S.o.cardsReady.then(() => {
+    const fu = f && f.dataset.id && faceOf(f.dataset.id);
+    if (fu) f!.style.backgroundImage = `url(${fu})`;
+  });
   const wrap = q<HTMLElement>("[data-steps]", S.root);
   if (!wrap) return;
   const svg = q<SVGSVGElement>("[data-draw-svg]", wrap),
