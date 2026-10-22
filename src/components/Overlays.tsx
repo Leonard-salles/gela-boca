@@ -1,4 +1,4 @@
-import { FONT_MONO } from "@/lib/fonts";
+import { FONT_BODY, FONT_MONO } from "@/lib/fonts";
 
 // Camadas fixas globais: preloader (Pokébola), transição "íris", cursor
 // personalizado e barra de progresso de scroll. Porte 1:1 do protótipo —
@@ -49,7 +49,7 @@ export function CursorEl() {
   return (
     <div data-cursor-el aria-hidden="true" style={{ position: "fixed", left: 0, top: 0, zIndex: 9999, pointerEvents: "none", display: "none" }}>
       <div data-cursor-disk style={{ position: "absolute", left: -46, top: -46, width: 92, height: 92, borderRadius: "50%", background: "#f3f1ea", transform: "scale(0)", opacity: 0, display: "grid", placeItems: "center" }}>
-        <span data-cursor-label style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: 12, color: "#0a0b10", whiteSpace: "nowrap" }}>
+        <span data-cursor-label style={{ fontFamily: FONT_BODY, fontWeight: 600, fontSize: 12, color: "#0a0b10", whiteSpace: "nowrap" }}>
           Ver
         </span>
       </div>

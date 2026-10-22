@@ -1,4 +1,4 @@
-import { FONT_DISPLAY } from "@/lib/fonts";
+import { FONT_DISPLAY, FONT_MONO } from "@/lib/fonts";
 
 interface HeaderProps {
   storeName: string;
@@ -75,7 +75,7 @@ export function Header({ storeName, isMobile, navInicio, navProdutos, cartCount,
               <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" />
               <path d="M9 8V6a3 3 0 0 1 6 0v2" />
             </svg>
-            <span data-cart-badge style={{ position: "absolute", top: -4, right: -4, minWidth: 20, height: 20, padding: "0 5px", boxSizing: "border-box", borderRadius: 999, background: "#e8392b", color: "#0a0b10", fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, display: "grid", placeItems: "center", opacity: badgeOpacity, boxShadow: "0 0 0 2px #0a0b10" }}>
+            <span data-cart-badge style={{ position: "absolute", top: -4, right: -4, minWidth: 20, height: 20, padding: "0 5px", boxSizing: "border-box", borderRadius: 999, background: "#e8392b", color: "#0a0b10", fontFamily: FONT_MONO, fontSize: 11, fontWeight: 600, display: "grid", placeItems: "center", opacity: badgeOpacity, boxShadow: "0 0 0 2px #0a0b10" }}>
               {cartCount}
             </span>
           </button>

@@ -1,23 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { FONT_BODY } from "@/lib/fonts";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+// Fontes auto-hospedadas (next/font/local) em vez de next/font/google: o
+// Turbopack tem um bug intermitente ao baixar fontes do Google durante o
+// build na Vercel ("Module not found: @vercel/turbopack-next/.../font").
+const display = localFont({
+  src: "./fonts/bricolage-grotesque-variable.woff2",
   variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const body = Geist({
-  variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const mono = Geist_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: "200 800",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,13 +28,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="pt-BR" className={`${display.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
       <body
         style={{
           margin: 0,
           background: "#0a0b10",
           color: "#f3f1ea",
-          fontFamily: "var(--font-body), system-ui, sans-serif",
+          fontFamily: FONT_BODY,
         }}
       >
         {children}
