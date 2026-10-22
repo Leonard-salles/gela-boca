@@ -248,7 +248,11 @@ export async function loadApi(
         if (!r.ok) return;
         const d: TcgdexCardResponse = await r.json();
         out[c.id] = {
-          img: d.image ? d.image + "/high.webp" : null,
+          // "low" (245x337, ~17KB) em vez de "high" (600x825, ~57KB): essa
+          // imagem alimenta as cartas do carrossel/rasgue-o-pacote, exibidas
+          // a no máximo ~300px — baixar/decodificar 600x825 é 6x mais pixel
+          // do que o necessário e pesa na hora de revelar cada carta.
+          img: d.image ? d.image + "/low.webp" : null,
           name: d.name,
           hp: d.hp,
           illus: d.illustrator,
