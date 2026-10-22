@@ -49,6 +49,7 @@ interface CardCtl {
   t: ReturnType<typeof setTimeout> | number;
   on?: boolean;
   holoOn?: boolean;
+  rect?: DOMRect;
   tl: gsap.core.Timeline;
 }
 
@@ -765,14 +766,20 @@ function holoOn(S: S, cs: CardCtl) {
   if (!FINE()) {
     cs.tilt.style.setProperty("--mx", "50%");
     cs.tilt.style.setProperty("--my", "40%");
+  } else {
+    // Medido uma vez por revelação, não a cada pointermove — a carta não se
+    // move enquanto está em hover (dragar cancela o holo antes), então o
+    // rect fica válido e evita forçar layout a cada movimento do mouse.
+    cs.rect = cs.tilt.getBoundingClientRect();
   }
 }
 function holoMove(S: S, e: PointerEvent) {
+  if (e.pointerType !== "mouse") return;
   const it = (e.target as HTMLElement).closest<HTMLElement>("[data-card-item]");
   if (!it) return;
   const cs = S.cards.get(it);
-  if (!cs || !cs.holoOn) return;
-  const r = cs.tilt.getBoundingClientRect(),
+  if (!cs || !cs.holoOn || !cs.rect) return;
+  const r = cs.rect,
     px = gsap.utils.clamp(0, 1, (e.clientX - r.left) / r.width),
     py = gsap.utils.clamp(0, 1, (e.clientY - r.top) / r.height);
   const s = cs.tilt.style;
