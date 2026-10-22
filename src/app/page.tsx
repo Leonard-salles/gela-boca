@@ -245,7 +245,7 @@ export default function Page() {
         onToggleMenu={() => setMenuOpen((v) => !v)}
       />
 
-      <Hero L={vm.L} />
+      <Hero L={vm.L} isMobile={vm.isMobile} />
 
       <BenefitsMarquee pix={vm.pix} />
 

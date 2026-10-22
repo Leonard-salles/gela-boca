@@ -6,6 +6,7 @@ import { tcgdexCardImageUrlHD } from "@/lib/tcgdexImage";
 
 interface HeroProps {
   L: HeroLayout;
+  isMobile: boolean;
 }
 
 function hideImg(e: React.SyntheticEvent<HTMLImageElement>) {
@@ -18,7 +19,8 @@ function hideImg(e: React.SyntheticEvent<HTMLImageElement>) {
 const HERO_CARD_1 = tcgdexCardImageUrlHD(CARDS.find((c) => c.id === "c13")!.apiId); // Mewtwo ex
 const HERO_CARD_2 = tcgdexCardImageUrlHD(CARDS.find((c) => c.id === "c7")!.apiId); // Rayquaza VMAX
 
-export function Hero({ L }: HeroProps) {
+export function Hero({ L, isMobile }: HeroProps) {
+  const banner2Src = isMobile ? "/banners/banner-2-mobile.jpg" : "/banners/banner-2.jpg";
   return (
     <section
       data-hero
@@ -40,16 +42,18 @@ export function Hero({ L }: HeroProps) {
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
           <Image src="/banners/banner-1.jpg" alt="" fill unoptimized onError={hideImg} style={{ objectFit: "cover" }} />
         </div>
-        <div data-hero-scrub aria-hidden={L.cardOpacity === 0} style={{ position: "absolute", top: L.mTop, right: L.mRight, height: L.mH, width: L.mW, transform: L.mTf, zIndex: 1, opacity: L.cardOpacity, pointerEvents: L.cardOpacity === 0 ? "none" : "auto" }}>
-          <div data-hp style={{ position: "relative", width: "100%", height: "100%" }}>
-            <div data-hglow aria-hidden="true" style={{ position: "absolute", inset: "-10%", borderRadius: 60, background: "radial-gradient(closest-side,rgba(232,57,43,.6),rgba(232,57,43,0))", filter: "blur(40px)", opacity: L.glow, overflow: "hidden" }}>
-              <Image src={HERO_CARD_1} alt="" fill unoptimized style={{ objectFit: "cover", filter: "blur(50px) saturate(1.5)", opacity: 0.7 }} />
-            </div>
-            <div data-hm style={{ position: "absolute", inset: 0, borderRadius: L.mR, overflow: "hidden", background: "#170c10", boxShadow: "0 40px 100px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)" }}>
-              <Image src={HERO_CARD_1} alt="Mewtwo ex — carta em destaque" fill unoptimized style={{ objectFit: "cover" }} />
+        {!isMobile && (
+          <div data-hero-scrub style={{ position: "absolute", top: L.mTop, right: L.mRight, height: L.mH, width: L.mW, transform: L.mTf, zIndex: 1 }}>
+            <div data-hp style={{ position: "relative", width: "100%", height: "100%" }}>
+              <div data-hglow aria-hidden="true" style={{ position: "absolute", inset: "-10%", borderRadius: 60, background: "radial-gradient(closest-side,rgba(232,57,43,.6),rgba(232,57,43,0))", filter: "blur(40px)", opacity: L.glow, overflow: "hidden" }}>
+                <Image src={HERO_CARD_1} alt="" fill unoptimized style={{ objectFit: "cover", filter: "blur(50px) saturate(1.5)", opacity: 0.7 }} />
+              </div>
+              <div data-hm style={{ position: "absolute", inset: 0, borderRadius: L.mR, overflow: "hidden", background: "#170c10", boxShadow: "0 40px 100px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)" }}>
+                <Image src={HERO_CARD_1} alt="Mewtwo ex — carta em destaque" fill unoptimized style={{ objectFit: "cover" }} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none", opacity: L.scrim, background: "linear-gradient(180deg,rgba(10,11,16,.55) 0%,rgba(10,11,16,0) 25%,rgba(10,11,16,.4) 50%,rgba(10,11,16,.96) 82%)" }} />
         <div style={{ position: "absolute", inset: 0, zIndex: 3, display: "flex", flexDirection: "column", justifyContent: L.tj, padding: `96px clamp(20px,4vw,64px) ${L.tpb}`, boxSizing: "border-box", pointerEvents: "none" }}>
           <div style={{ maxWidth: L.tmw, pointerEvents: "auto", display: "flex", flexDirection: "column", gap: "clamp(20px,2.4vw,30px)" }}>
@@ -105,18 +109,20 @@ export function Hero({ L }: HeroProps) {
         style={{ position: "absolute", inset: 0, background: "radial-gradient(110% 90% at 80% 40%,rgba(47,107,255,.36),rgba(47,107,255,0) 60%),radial-gradient(60% 60% at 10% 100%,rgba(255,210,63,.12),rgba(255,210,63,0) 70%),#0a0e1c" }}
       >
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <Image src="/banners/banner-2.jpg" alt="" fill unoptimized onError={hideImg} style={{ objectFit: "cover" }} />
+          <Image src={banner2Src} alt="" fill unoptimized onError={hideImg} style={{ objectFit: "cover" }} />
         </div>
-        <div data-hero-scrub aria-hidden={L.cardOpacity === 0} style={{ position: "absolute", top: L.mTop, right: L.mRight, height: L.mH, width: L.mW, transform: L.mTf, zIndex: 1, opacity: L.cardOpacity, pointerEvents: L.cardOpacity === 0 ? "none" : "auto" }}>
-          <div data-hp style={{ position: "relative", width: "100%", height: "100%" }}>
-            <div data-hglow aria-hidden="true" style={{ position: "absolute", inset: "-10%", borderRadius: 60, background: "radial-gradient(closest-side,rgba(47,107,255,.65),rgba(47,107,255,0))", filter: "blur(40px)", opacity: L.glow, overflow: "hidden" }}>
-              <Image src={HERO_CARD_2} alt="" fill unoptimized style={{ objectFit: "cover", filter: "blur(50px) saturate(1.5)", opacity: 0.7 }} />
-            </div>
-            <div data-hm style={{ position: "absolute", inset: 0, borderRadius: L.mR, overflow: "hidden", background: "#0c1124", boxShadow: "0 40px 100px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)" }}>
-              <Image src={HERO_CARD_2} alt="Rayquaza VMAX — carta em destaque" fill unoptimized style={{ objectFit: "cover" }} />
+        {!isMobile && (
+          <div data-hero-scrub style={{ position: "absolute", top: L.mTop, right: L.mRight, height: L.mH, width: L.mW, transform: L.mTf, zIndex: 1 }}>
+            <div data-hp style={{ position: "relative", width: "100%", height: "100%" }}>
+              <div data-hglow aria-hidden="true" style={{ position: "absolute", inset: "-10%", borderRadius: 60, background: "radial-gradient(closest-side,rgba(47,107,255,.65),rgba(47,107,255,0))", filter: "blur(40px)", opacity: L.glow, overflow: "hidden" }}>
+                <Image src={HERO_CARD_2} alt="" fill unoptimized style={{ objectFit: "cover", filter: "blur(50px) saturate(1.5)", opacity: 0.7 }} />
+              </div>
+              <div data-hm style={{ position: "absolute", inset: 0, borderRadius: L.mR, overflow: "hidden", background: "#0c1124", boxShadow: "0 40px 100px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)" }}>
+                <Image src={HERO_CARD_2} alt="Rayquaza VMAX — carta em destaque" fill unoptimized style={{ objectFit: "cover" }} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <div aria-hidden="true" style={{ position: "absolute", inset: 0, zIndex: 2, pointerEvents: "none", opacity: L.scrim, background: "linear-gradient(180deg,rgba(10,11,16,.55) 0%,rgba(10,11,16,0) 25%,rgba(10,11,16,.4) 50%,rgba(10,11,16,.96) 82%)" }} />
         <div style={{ position: "absolute", inset: 0, zIndex: 3, display: "flex", flexDirection: "column", justifyContent: L.tj, padding: `96px clamp(20px,4vw,64px) ${L.tpb}`, boxSizing: "border-box", pointerEvents: "none" }}>
           <div style={{ maxWidth: L.tmw, pointerEvents: "auto", display: "flex", flexDirection: "column", gap: "clamp(20px,2.4vw,30px)" }}>

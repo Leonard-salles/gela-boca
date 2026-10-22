@@ -23,7 +23,6 @@ export interface HeroLayout {
   mTf: string;
   mR: string;
   glow: number;
-  cardOpacity: number;
   scrim: number;
   tj: string;
   tpb: string;
@@ -115,8 +114,8 @@ export function buildViewModel(s: StateSnapshot) {
   // GIF do banner ocupa o fundo inteiro (full-bleed); no desktop a carta em
   // destaque volta a aparecer no "cartão" retrato flutuante à direita.
   const L: HeroLayout = mob
-    ? { mTop: "0px", mRight: "0px", mH: "100%", mW: "100%", mTf: "none", mR: "0px", glow: 0, cardOpacity: 0, scrim: 1, tj: "flex-end", tpb: "148px", tmw: "100%", navLinks: "none", phTop: "96px" }
-    : { mTop: "calc(50% + 22px)", mRight: "clamp(20px,4vw,64px)", mH: "min(80dvh,880px)", mW: "calc(min(80dvh,880px) * 600 / 825)", mTf: "translateY(-50%)", mR: "28px", glow: 1, cardOpacity: 1, scrim: 0.6, tj: "center", tpb: "40px", tmw: "min(56%,780px)", navLinks: "flex", phTop: "22px" };
+    ? { mTop: "0px", mRight: "0px", mH: "100%", mW: "100%", mTf: "none", mR: "0px", glow: 0, scrim: 1, tj: "flex-end", tpb: "148px", tmw: "100%", navLinks: "none", phTop: "96px" }
+    : { mTop: "calc(50% + 22px)", mRight: "clamp(20px,4vw,64px)", mH: "min(80dvh,880px)", mW: "calc(min(80dvh,880px) * 600 / 825)", mTf: "translateY(-50%)", mR: "28px", glow: 1, scrim: 0.6, tj: "center", tpb: "40px", tmw: "min(56%,780px)", navLinks: "flex", phTop: "22px" };
 
   const cardsView: CardView[] = CARDS.filter((c) => c.tabs.includes(s.tab)).map((c0) => {
     const c = mergedCard(c0, s.api);
