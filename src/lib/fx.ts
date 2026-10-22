@@ -444,13 +444,17 @@ function setupCarousel(S: S) {
   const apply = () => {
     gsap.set(track, { x: st.x });
     if (thumb) {
-      const frac = Math.min(1, vp.clientWidth / Math.max(1, track.scrollWidth));
+      const frac = st.thumbFrac ?? 1;
       const p = st.min ? st.x / st.min : 0;
       gsap.set(thumb, { width: frac * 100 + "%", xPercent: gsap.utils.clamp(0, 1, p) * ((1 - frac) / frac) * 100 });
     }
   };
   st.measure = () => {
-    st.min = Math.min(0, vp.clientWidth - track.scrollWidth);
+    // vp.clientWidth/track.scrollWidth forçam layout — medidos só aqui (init
+    // + resize), não a cada frame do drag/scroll-pin como apply() fazia antes.
+    st.vpWidth = vp.clientWidth;
+    st.min = Math.min(0, st.vpWidth - track.scrollWidth);
+    st.thumbFrac = Math.min(1, st.vpWidth / Math.max(1, track.scrollWidth));
     st.x = gsap.utils.clamp(st.min, 0, st.x);
     apply();
   };
@@ -501,7 +505,7 @@ function setupCarousel(S: S) {
   buildPosCache();
   st.buildPosCache = buildPosCache;
   const revealByPosition = () => {
-    const mid = vp.clientWidth / 2;
+    const mid = (st.vpWidth ?? vp.clientWidth) / 2;
     posCache.forEach(({ el, center, w }) => {
       const screenCenter = center + st.x;
       Math.abs(screenCenter - mid) < w * 0.65 ? cardEnter(S, el, true) : cardLeave(S, el);
@@ -664,6 +668,17 @@ function cardsIn(S: S) {
   });
   S.io!.disconnect();
   items.forEach((it) => S.io!.observe(it));
+  if (!FINE()) {
+    // Em touch (drag/scroll-pin), várias cartas podem precisar revelar quase
+    // juntas durante o próprio gesto de rolagem — monta a grade de blocos de
+    // cada uma com antecedência (assim que os dados chegam), em vez de pagar
+    // esse custo no meio do scroll, onde qualquer travada é bem mais sentida.
+    S.o.cardsReady.then(() => {
+      items.forEach((it) => {
+        if (!S.cards.get(it)) prepCard(S, it);
+      });
+    });
+  }
   if (RM()) {
     gsap.set(items, { opacity: 1, y: 0 });
     return;
