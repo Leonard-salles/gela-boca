@@ -28,6 +28,7 @@ export interface FxOptions {
   onNav: (n: "inicio" | "produtos") => void;
   onHero: (n: number) => void;
   onIrisNav: () => void;
+  cardsReady: Promise<void>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1215,7 +1216,12 @@ function runPreloader(S: S, done: () => void) {
     .fromTo(flash, { opacity: 1 }, { opacity: 0, duration: 0.32, ease: "power2.out" }, 1.62)
     .to(top, { yPercent: -100, duration: 0.52, ease: M.inOut }, 1.66)
     .to(bot, { yPercent: 100, duration: 0.52, ease: M.inOut }, 1.66)
-    .add(done, 1.72);
+    .add(() => {
+      // Não revela o site até as cartas (TCGdex) estarem prontas, com um teto
+      // de 4s a mais para não prender quem está com rede ruim/API fora do ar.
+      const timeout = new Promise<void>((r) => setTimeout(r, 4000));
+      Promise.race([S.o.cardsReady, timeout]).then(done);
+    }, 1.72);
 }
 
 /* ---------------------------------- HERO ---------------------------------- */

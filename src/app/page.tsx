@@ -44,10 +44,20 @@ export default function Page() {
   const prevMenuOpen = useRef(false);
   const prevSearchOpen = useRef(false);
 
+  // Resolve quando as cartas (TCGdex) terminam de carregar — a tela de
+  // loading (pokébola) fica no ar até aqui (ou um teto de 4s) em vez de
+  // revelar o site com cartas ainda não prontas para o hover/reveal.
+  const cardsReady = useRef<{ promise: Promise<void>; resolve: () => void } | null>(null);
+  if (!cardsReady.current) {
+    let resolve!: () => void;
+    const promise = new Promise<void>((r) => (resolve = r));
+    cardsReady.current = { promise, resolve };
+  }
+
   // Boot: inicializa o motor de animação (GSAP/Lenis) de imediato — não espera
   // as cartas, para o site inteiro não ficar congelado se a TCGdex demorar.
-  // Preço/imagem das cartas (TCGdex) carregam em paralelo e só atualizam o
-  // que depende deles (cardsView, reveal das cartas) quando chegarem.
+  // A tela de loading, porém, segura a entrada até as cartas estarem prontas
+  // (ver fx.ts: runPreloader aguarda options.cardsReady).
   useEffect(() => {
     if (!rootRef.current) return;
     const options: FxOptions = {
@@ -64,6 +74,7 @@ export default function Page() {
         setMenuOpen(false);
         setSearchOpen(false);
       },
+      cardsReady: cardsReady.current!.promise,
     };
     fxRef.current = initFx(rootRef.current, options);
     return () => {
@@ -82,6 +93,7 @@ export default function Page() {
       if (dead) return;
       setApi(apiData);
       setApiStatus(Object.keys(apiData).length ? "ok" : "off");
+      cardsReady.current!.resolve();
     })();
     return () => {
       dead = true;
