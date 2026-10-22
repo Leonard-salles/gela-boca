@@ -695,8 +695,12 @@ function prepCard(S: S, item: HTMLElement): CardCtl | null {
     h = S.car?.faceH || face.clientHeight;
   if (!w) return null;
   face.innerHTML = "";
-  const cols = 5,
-    rows = 6,
+  // Em touch, o efeito "estilhaçado" (várias fatias animando transform+opacity
+  // ao mesmo tempo) é caro de pintar e pode travar durante o próprio gesto de
+  // scroll — usa só 1 bloco (fade simples), igual ao fallback de reduced-motion.
+  const simple = RM() || !FINE();
+  const cols = simple ? 1 : 5,
+    rows = simple ? 1 : 6,
     bw = w / cols,
     bh = h / rows,
     frag = document.createDocumentFragment(),
@@ -727,7 +731,7 @@ function prepCard(S: S, item: HTMLElement): CardCtl | null {
     tl: gsap.timeline({ paused: true }),
   };
   cs.tl.eventCallback("onComplete", () => holoOn(S, cs));
-  if (RM()) cs.tl.to(blocks, { opacity: 1, duration: 0.15 }, 0).to(cs.back, { opacity: 0, duration: 0.15 }, 0);
+  if (simple) cs.tl.to(blocks, { opacity: 1, duration: 0.15 }, 0).to(cs.back, { opacity: 0, duration: 0.15 }, 0);
   else {
     const del = blocks.map((_, i) => (((i / cols) | 0) + (i % cols)) * 0.016 + Math.random() * 0.04);
     cs.tl
