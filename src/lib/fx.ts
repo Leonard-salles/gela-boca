@@ -487,6 +487,14 @@ function setupCarousel(S: S) {
       center: el.offsetLeft - pl + el.offsetWidth / 2,
       w: el.offsetWidth,
     }));
+    // Todas as cartas têm a mesma largura (clamp() no CSS) — mede a face uma
+    // vez aqui em vez de a cada prepCard(), evitando um layout forçado
+    // (clientWidth/clientHeight) toda vez que uma carta nova é revelada.
+    const firstFace = q<HTMLElement>("[data-blocks]", track);
+    if (firstFace) {
+      st.faceW = firstFace.clientWidth;
+      st.faceH = firstFace.clientHeight;
+    }
   };
   buildPosCache();
   st.buildPosCache = buildPosCache;
@@ -666,12 +674,12 @@ function prepCard(S: S, item: HTMLElement): CardCtl | null {
   if (!url) return null;
   const face = q<HTMLElement>("[data-blocks]", item);
   if (!face) return null;
-  const w = face.clientWidth,
-    h = face.clientHeight;
+  const w = S.car?.faceW || face.clientWidth,
+    h = S.car?.faceH || face.clientHeight;
   if (!w) return null;
   face.innerHTML = "";
-  const cols = 6,
-    rows = 8,
+  const cols = 5,
+    rows = 6,
     bw = w / cols,
     bh = h / rows,
     frag = document.createDocumentFragment(),

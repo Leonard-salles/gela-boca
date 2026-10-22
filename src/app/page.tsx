@@ -44,38 +44,47 @@ export default function Page() {
   const prevMenuOpen = useRef(false);
   const prevSearchOpen = useRef(false);
 
-  // Boot: carrega API da TCGdex + gera as frentes das cartas (canvas) e então
-  // inicializa o motor de animação (GSAP/Lenis), espelhando boot() do protótipo.
+  // Boot: inicializa o motor de animação (GSAP/Lenis) de imediato — não espera
+  // as cartas, para o site inteiro não ficar congelado se a TCGdex demorar.
+  // Preço/imagem das cartas (TCGdex) carregam em paralelo e só atualizam o
+  // que depende deles (cardsView, reveal das cartas) quando chegarem.
+  useEffect(() => {
+    if (!rootRef.current) return;
+    const options: FxOptions = {
+      get: () => ({
+        preloader: STORE_CONFIG.preloader,
+        revealTrigger: STORE_CONFIG.revealTrigger,
+        holo: STORE_CONFIG.holoIntensity,
+        smooth: STORE_CONFIG.smoothScroll,
+        cursor: STORE_CONFIG.customCursor,
+      }),
+      onNav: (n) => setNavActive((prev) => (prev === n ? prev : n)),
+      onHero: () => {},
+      onIrisNav: () => {
+        setMenuOpen(false);
+        setSearchOpen(false);
+      },
+    };
+    fxRef.current = initFx(rootRef.current, options);
+    return () => {
+      fxRef.current?.destroy();
+      fxRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     let dead = false;
     (async () => {
       const apiData = STORE_CONFIG.useApi ? await loadApi(CARDS) : {};
       if (dead) return;
       await makeFaces(CARDS.map((c) => ({ ...c, img: apiData[c.id]?.img ?? null })));
-      if (dead || !rootRef.current) return;
+      if (dead) return;
       setApi(apiData);
       setApiStatus(Object.keys(apiData).length ? "ok" : "off");
-      const options: FxOptions = {
-        get: () => ({
-          preloader: STORE_CONFIG.preloader,
-          revealTrigger: STORE_CONFIG.revealTrigger,
-          holo: STORE_CONFIG.holoIntensity,
-          smooth: STORE_CONFIG.smoothScroll,
-          cursor: STORE_CONFIG.customCursor,
-        }),
-        onNav: (n) => setNavActive((prev) => (prev === n ? prev : n)),
-        onHero: () => {},
-        onIrisNav: () => {
-          setMenuOpen(false);
-          setSearchOpen(false);
-        },
-      };
-      fxRef.current = initFx(rootRef.current, options);
     })();
     return () => {
       dead = true;
-      fxRef.current?.destroy();
-      fxRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
